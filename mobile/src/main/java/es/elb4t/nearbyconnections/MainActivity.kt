@@ -7,10 +7,10 @@ import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
-import android.widget.Button
 import android.widget.TextView
 import com.google.android.gms.nearby.Nearby
 import com.google.android.gms.nearby.connection.*
+import kotlinx.android.synthetic.main.activity_main.*
 import java.io.UnsupportedEncodingException
 
 
@@ -20,8 +20,8 @@ class MainActivity : AppCompatActivity() {
     // Consejo: utiliza como SERVICE_ID el nombre de tu paquete
     private val SERVICE_ID = "es.elb4t.nearbyconnections"
     private val TAG = "Mobile:"
-    var botonLED: Button? = null
     var textview: TextView? = null
+    private var endpointId: String = ""
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,12 +29,23 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         textview = findViewById(R.id.textView1)
-        botonLED = findViewById(R.id.buttonLED)
 
-        botonLED?.setOnClickListener {
+        buttonScan.setOnClickListener {
             Log.i(TAG, "Boton presionado")
             startDiscovery()
             textview?.text = "Buscando..."
+        }
+
+        buttonConnect.setOnClickListener {
+            connect()
+        }
+
+        buttonOn.setOnClickListener {
+            sendData(endpointId, "ON")
+        }
+
+        buttonOff.setOnClickListener {
+            sendData(endpointId, "OFF")
         }
 
         // Comprobación de permisos peligrosos
@@ -52,10 +63,12 @@ class MainActivity : AppCompatActivity() {
             MY_PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Log.i(TAG, "Permisos concedidos")
+                    buttonScan?.isEnabled = true
                 } else {
                     Log.i(TAG, "Permisos denegados")
                     textview?.text = "Debe aceptar los permisos para comenzar"
-                    botonLED?.isEnabled = false
+                    buttonScan?.isEnabled = false
+                    buttonConnect?.isEnabled = false
                 }
                 return
             }
@@ -80,25 +93,31 @@ class MainActivity : AppCompatActivity() {
         Log.i(TAG, "Se ha detenido el modo descubrimiento.")
     }
 
+
+    private fun connect() {
+        // Iniciamos la conexión con al anunciante "Nearby LED"
+        Log.i(TAG, "Conectando...")
+        Nearby.getConnectionsClient(applicationContext)
+                .requestConnection(
+                        "Nearby LED",
+                        endpointId,
+                        mConnectionLifecycleCallback)
+                .addOnSuccessListener {
+                    Log.i(TAG, "Solicitud lanzada, falta que ambos lados acepten")
+                }
+                .addOnFailureListener { e ->
+                    Log.e(TAG, "Error en solicitud de conexión", e)
+                    sendData(endpointId, "DISCONNECT")
+                }
+    }
+
     private val mEndpointDiscoveryCallback: EndpointDiscoveryCallback = object : EndpointDiscoveryCallback() {
         override fun onEndpointFound(endpointId: String, discoveredEndpointInfo: DiscoveredEndpointInfo) {
             Log.i(TAG, "Descubierto dispositivo con Id: $endpointId")
             textview?.text = "Descubierto: ${discoveredEndpointInfo.endpointName}"
+            this@MainActivity.endpointId = endpointId
+            buttonConnect?.isEnabled = true
             stopDiscovery()
-            // Iniciamos la conexión con al anunciante "Nearby LED"
-            Log.i(TAG, "Conectando...")
-            Nearby.getConnectionsClient(applicationContext)
-                    .requestConnection(
-                            "Nearby LED",
-                            endpointId,
-                            mConnectionLifecycleCallback)
-                    .addOnSuccessListener {
-                        Log.i(TAG, "Solicitud lanzada, falta que ambos lados acepten")
-                    }
-                    .addOnFailureListener { e ->
-                        Log.e(TAG, "Error en solicitud de conexión", e)
-                        textview?.text = "Desconectado"
-                    }
         }
 
         override fun onEndpointLost(endpointId: String) {}
@@ -117,15 +136,23 @@ class MainActivity : AppCompatActivity() {
                 ConnectionsStatusCodes.STATUS_OK -> {
                     Log.i(TAG, "Estamos conectados!")
                     textview?.text = "Conectado"
-                    sendData(endpointId, "SWITCH")
+                    buttonConnect?.text = "Disconnect"
+                    buttonOn.isEnabled = true
+                    buttonOff.isEnabled = true
                 }
                 ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED -> {
                     Log.i(TAG, "Conexión rechazada por uno o ambos lados")
                     textview?.text = "Desconectado"
+                    buttonConnect?.text = "Connect"
+                    buttonOn.isEnabled = false
+                    buttonOff.isEnabled = false
                 }
                 ConnectionsStatusCodes.STATUS_ERROR -> {
                     Log.i(TAG, "Conexión perdida antes de poder ser aceptada")
                     textview?.text = "Desconectado"
+                    buttonConnect?.text = "Connect"
+                    buttonOn.isEnabled = false
+                    buttonOff.isEnabled = false
                 }
             }
         }
@@ -133,6 +160,10 @@ class MainActivity : AppCompatActivity() {
         override fun onDisconnected(endpointId: String) {
             Log.i(TAG, "Desconexión del endpoint, no se pueden intercambiar más datos.")
             textview?.text = "Desconectado"
+            buttonConnect?.text = "Connect"
+            buttonConnect.isEnabled = false
+            buttonOn.isEnabled = false
+            buttonOff.isEnabled = false
         }
     }
 

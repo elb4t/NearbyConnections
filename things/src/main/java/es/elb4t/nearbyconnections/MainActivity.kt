@@ -81,9 +81,10 @@ class MainActivity : Activity() {
         override fun onPayloadReceived(endpointId: String, payload: Payload) {
             val message = String(payload.asBytes()!!)
             Log.i(TAG, "Se ha recibido una transferencia desde ($endpointId) con el siguiente contenido: $message")
-            disconnect(endpointId)
             when (message) {
-                "SWITCH" -> switchLED()
+                "ON" -> switchLED(true)
+                "OFF" -> switchLED(false)
+                "DISCONNECT" -> disconnect(endpointId)
                 else -> Log.w(TAG, "No existe una acción asociada a este mensaje.")
             }
         }
@@ -93,15 +94,13 @@ class MainActivity : Activity() {
         }
     }
 
-    fun switchLED() {
+    fun switchLED(status: Boolean) {
         try {
-            if (ledStatus!!) {
+            if (!status) {
                 mLedGpio?.value = false
-                ledStatus = false
                 Log.i(TAG, "LED OFF")
             } else {
                 mLedGpio?.value = true
-                ledStatus = true
                 Log.i(TAG, "LED ON")
             }
         } catch (e: IOException) {

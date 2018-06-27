@@ -16,16 +16,52 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.3" />
+
     <Button
-        android:id="@+id/buttonLED"
+        android:id="@+id/buttonScan"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="89dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="32dp"
+        android:text="Scan"
+        app:layout_constraintEnd_toStartOf="@+id/buttonConnect"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView1" />
+
+    <Button
+        android:id="@+id/buttonConnect"
+        style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Acción!"
-        style="@style/Widget.AppCompat.Button.Colored"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginTop="32dp"
+        android:enabled="false"
+        android:text="Connect"
+        app:layout_constraintLeft_toRightOf="@+id/buttonScan"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.6" />
+        app:layout_constraintTop_toBottomOf="@+id/textView1" />
+
+    <Button
+        android:id="@+id/buttonOn"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="89dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:enabled="false"
+        android:text="ON"
+        app:layout_constraintEnd_toStartOf="@+id/buttonOff"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttonScan" />
+
+    <Button
+        android:id="@+id/buttonOff"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:enabled="false"
+        android:text="OFF"
+        app:layout_constraintLeft_toRightOf="@+id/buttonOn"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttonConnect" />
 
 </android.support.constraint.ConstraintLayout>
