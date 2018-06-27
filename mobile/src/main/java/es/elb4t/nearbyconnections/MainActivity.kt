@@ -48,6 +48,10 @@ class MainActivity : AppCompatActivity() {
             sendData(endpointId, "OFF")
         }
 
+        buttonWifi.setOnClickListener {
+            sendData(endpointId, "WIFI")
+        }
+
         // Comprobación de permisos peligrosos
         if (ContextCompat.checkSelfPermission(this,
                         Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -139,6 +143,7 @@ class MainActivity : AppCompatActivity() {
                     buttonConnect?.text = "Disconnect"
                     buttonOn.isEnabled = true
                     buttonOff.isEnabled = true
+                    buttonWifi.isEnabled = true
                 }
                 ConnectionsStatusCodes.STATUS_CONNECTION_REJECTED -> {
                     Log.i(TAG, "Conexión rechazada por uno o ambos lados")
@@ -146,6 +151,7 @@ class MainActivity : AppCompatActivity() {
                     buttonConnect?.text = "Connect"
                     buttonOn.isEnabled = false
                     buttonOff.isEnabled = false
+                    buttonWifi.isEnabled = false
                 }
                 ConnectionsStatusCodes.STATUS_ERROR -> {
                     Log.i(TAG, "Conexión perdida antes de poder ser aceptada")
@@ -153,6 +159,7 @@ class MainActivity : AppCompatActivity() {
                     buttonConnect?.text = "Connect"
                     buttonOn.isEnabled = false
                     buttonOff.isEnabled = false
+                    buttonWifi.isEnabled = false
                 }
             }
         }
@@ -164,6 +171,7 @@ class MainActivity : AppCompatActivity() {
             buttonConnect.isEnabled = false
             buttonOn.isEnabled = false
             buttonOff.isEnabled = false
+            buttonWifi.isEnabled = false
         }
     }
 

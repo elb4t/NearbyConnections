@@ -16,10 +16,12 @@ class MainActivity : Activity() {
     private val PIN_LED = "BCM18"
     var mLedGpio: Gpio? = null
     private var ledStatus: Boolean? = null
+    private var wifiutils: WifiUtils? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        wifiutils = WifiUtils(this)
         // Configuración del LED
         ledStatus = false
         val service = PeripheralManager.getInstance()
@@ -85,6 +87,7 @@ class MainActivity : Activity() {
                 "ON" -> switchLED(true)
                 "OFF" -> switchLED(false)
                 "DISCONNECT" -> disconnect(endpointId)
+                "WIFI" -> doRemoteAction()
                 else -> Log.w(TAG, "No existe una acción asociada a este mensaje.")
             }
         }
@@ -126,5 +129,11 @@ class MainActivity : Activity() {
                 mLedGpio = null
             }
         }
+    }
+
+    fun doRemoteAction() {
+        wifiutils?.connectToAP("SSID", "pass")
+        wifiutils?.listNetworks()
+        wifiutils?.getConnectionInfo()
     }
 }

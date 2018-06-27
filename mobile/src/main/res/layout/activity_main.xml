@@ -64,4 +64,16 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/buttonConnect" />
 
+    <Button
+        android:id="@+id/buttonWifi"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="89dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:enabled="false"
+        android:text="WIFI"
+        app:layout_constraintEnd_toStartOf="@+id/buttonOff"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttonOn" />
+
 </android.support.constraint.ConstraintLayout>
